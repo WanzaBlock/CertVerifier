@@ -1,0 +1,65 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --surface-2: #1a1a1a;
+  --border: #222222;
+  --border-bright: #333333;
+  --text: #f0ede8;
+  --text-muted: #666666;
+  --text-dim: #444444;
+  --accent: #c8f060;
+  --accent-dim: rgba(200, 240, 96, 0.12);
+  --accent-glow: rgba(200, 240, 96, 0.25);
+  --red: #ff5c5c;
+  --red-dim: rgba(255, 92, 92, 0.12);
+  --orange: #f0a060;
+  --orange-dim: rgba(240, 160, 96, 0.12);
+  --font-display: "Syne", sans-serif;
+  --font-mono: "DM Mono", monospace;
+  --radius: 4px;
+  --radius-lg: 8px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Grid background ─────────────────────────────────────────────────────── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200, 240, 96, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 240, 96, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+/* ─── Selection ───────────────────────────────────────────────────────────── */
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
