@@ -3,10 +3,10 @@ import "./globals.css";
 export const metadata = {
   title: "CertVerifier — On-Chain Certificate Verification",
   description:
-    "Verify academic and professional certificates recorded on the Ethereum blockchain.",
+    "Verify academic and professional certificates recorded on the Base Sepolia blockchain.",
   openGraph: {
     title: "CertVerifier",
-    description: "Trustless certificate verification on Ethereum.",
+    description: "Trustless certificate verification on BASE SEPOLIA.",
   },
 };
 
