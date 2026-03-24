@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity 0.8.33;
 
 /// @title CertVerifier
 /// @notice Issues and verifies academic or professional certificates on-chain
@@ -16,7 +16,6 @@ contract CertVerifier {
     }
 
     mapping(bytes32 => Certificate) private certificates;
-
     uint256 public totalIssued;
     uint256 public totalRevoked;
 
@@ -27,6 +26,7 @@ contract CertVerifier {
         string institution
     );
     event CertificateRevoked(bytes32 indexed certHash);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     error NotOwner();
     error AlreadyIssued();
@@ -42,11 +42,6 @@ contract CertVerifier {
         owner = msg.sender;
     }
 
-    /// @notice Issue a new certificate
-    /// @param certHash keccak256 hash of the certificate ID
-    /// @param recipientName Full name of the recipient
-    /// @param course Name of the course or qualification
-    /// @param institution Issuing institution name
     function issueCertificate(
         bytes32 certHash,
         string calldata recipientName,
@@ -54,7 +49,6 @@ contract CertVerifier {
         string calldata institution
     ) external onlyOwner {
         if (certificates[certHash].exists) revert AlreadyIssued();
-
         certificates[certHash] = Certificate({
             recipientName: recipientName,
             course: course,
@@ -63,13 +57,10 @@ contract CertVerifier {
             exists: true,
             revoked: false
         });
-
         totalIssued++;
         emit CertificateIssued(certHash, recipientName, course, institution);
     }
 
-    /// @notice Verify a certificate by its hash
-    /// @param certHash keccak256 hash of the certificate ID
     function verifyCertificate(bytes32 certHash)
         external
         view
@@ -93,20 +84,17 @@ contract CertVerifier {
         );
     }
 
-    /// @notice Revoke a certificate
-    /// @param certHash keccak256 hash of the certificate ID
     function revokeCertificate(bytes32 certHash) external onlyOwner {
         if (!certificates[certHash].exists) revert NotFound();
         if (certificates[certHash].revoked) revert AlreadyRevoked();
-
         certificates[certHash].revoked = true;
         totalRevoked++;
         emit CertificateRevoked(certHash);
     }
 
-    /// @notice Transfer contract ownership
     function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "Zero address");
+        emit OwnershipTransferred(owner, newOwner);
         owner = newOwner;
     }
 }

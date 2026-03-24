@@ -5,6 +5,13 @@ import "forge-std/Test.sol";
 import "../src/CertVerifier.sol";
 
 contract CertVerifierTest is Test {
+    event CertificateIssued(
+        bytes32 indexed certHash,
+        string recipientName,
+        string course,
+        string institution
+    );
+
     CertVerifier verifier;
     address owner;
     address stranger = address(0xBEEF);
@@ -13,8 +20,6 @@ contract CertVerifierTest is Test {
         owner = address(this);
         verifier = new CertVerifier();
     }
-
-    // ─── helpers ────────────────────────────────────────────────────────────
 
     function _hash(string memory id) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(id));
@@ -25,15 +30,12 @@ contract CertVerifierTest is Test {
             _hash(id),
             "Samuel Mwanza",
             "Blockchain Security",
-            "IT-ARMI"
+            "WANZABLOCK TECH SCHOOL"
         );
     }
 
-    // ─── issue ───────────────────────────────────────────────────────────────
-
     function test_Issue_StoresCorrectData() public {
         _issue("CERT-001");
-
         (
             bool valid,
             string memory name,
@@ -42,7 +44,6 @@ contract CertVerifierTest is Test {
             uint256 issuedAt,
             bool revoked
         ) = verifier.verifyCertificate(_hash("CERT-001"));
-
         assertTrue(valid);
         assertEq(name, "Samuel Mwanza");
         assertEq(course, "Blockchain Security");
@@ -60,7 +61,12 @@ contract CertVerifierTest is Test {
     function test_Issue_EmitsEvent() public {
         bytes32 h = _hash("CERT-001");
         vm.expectEmit(true, false, false, true);
-        emit CertVerifier.CertificateIssued(h, "Samuel Mwanza", "Blockchain Security", "IT-ARMI");
+        emit CertificateIssued(
+            h,
+            "Samuel Mwanza",
+            "Blockchain Security",
+            "IT-ARMI"
+        );
         _issue("CERT-001");
     }
 
@@ -76,20 +82,17 @@ contract CertVerifierTest is Test {
         verifier.issueCertificate(_hash("CERT-001"), "Alice", "DeFi", "UNAM");
     }
 
-    // ─── verify ──────────────────────────────────────────────────────────────
-
     function test_Verify_ReturnsFalse_WhenNotFound() public view {
-        (bool valid,,,,,) = verifier.verifyCertificate(_hash("GHOST"));
+        (bool valid, , , , , ) = verifier.verifyCertificate(_hash("GHOST"));
         assertFalse(valid);
     }
-
-    // ─── revoke ──────────────────────────────────────────────────────────────
 
     function test_Revoke_MarksAsRevoked() public {
         _issue("CERT-001");
         verifier.revokeCertificate(_hash("CERT-001"));
-
-        (bool valid,,,,, bool revoked) = verifier.verifyCertificate(_hash("CERT-001"));
+        (bool valid, , , , , bool revoked) = verifier.verifyCertificate(
+            _hash("CERT-001")
+        );
         assertFalse(valid);
         assertTrue(revoked);
     }
@@ -118,8 +121,6 @@ contract CertVerifierTest is Test {
         vm.expectRevert(CertVerifier.NotOwner.selector);
         verifier.revokeCertificate(_hash("CERT-001"));
     }
-
-    // ─── ownership ───────────────────────────────────────────────────────────
 
     function test_TransferOwnership() public {
         verifier.transferOwnership(stranger);
