@@ -4,9 +4,9 @@ A full-stack dApp that issues and verifies academic or professional certificates
 
 **Live app:** https://onchaincert.vercel.app/
 
-**Live contract:** `0xb4B1dbBC4bC03FE122b7f973cBAa9651b3c232Eb`
+**Live contract:** `0x4c23c252EDeb0844F2BB2B2dE208d6764C05739B`
 **Network:** Base Sepolia (chainId 84532)
-**Explorer:** https://sepolia.basescan.org/address/0xb4B1dbBC4bC03FE122b7f973cBAa9651b3c232Eb
+**Explorer:** https://sepolia.basescan.org/address/0x4c23c252EDeb0844F2BB2B2dE208d6764C05739B
 
 ---
 
